@@ -1,0 +1,84 @@
+apply plugin: 'com.android.application'
+
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
+
+apply plugin: 'kotlin-kapt'
+
+def secretPropertiesFile = rootProject.file('secret.properties')
+def secretProperties = new Properties()
+secretProperties.load(new FileInputStream(secretPropertiesFile))
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "com.mining.mining"
+        minSdkVersion 16
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        multiDexEnabled true
+        buildConfigField "String", "ACCESS_ID", secretProperties['accessID']
+        buildConfigField "String", "SECRET_KEY", secretProperties['secretKey']
+    }
+    dexOptions {
+        jumboMode true
+        javaMaxHeapSize "4g"
+
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    //test
+    testImplementation 'junit:junit:4.12'
+
+    //android
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.android.support:appcompat-v7:28.0.0-alpha3'
+    implementation 'com.android.support:design:28.0.0-alpha3'
+    implementation "com.android.support:support-v4:28.0.0-alpha3"
+    implementation "com.android.support:recyclerview-v7:28.0.0-alpha3"
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+
+    //kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.51"
+    implementation "org.jetbrains.anko:anko-commons:0.10.5"
+    implementation 'org.jetbrains.anko:anko-sdk15:0.10.5'
+
+    //glide
+    kapt 'com.github.bumptech.glide:compiler:4.7.1'
+    implementation ('com.github.bumptech.glide:glide:4.7.1') {
+        exclude group: 'com.android.support'
+    }
+
+    //gson
+    implementation 'com.google.code.gson:gson:2.8.5'
+
+    //retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation "com.squareup.retrofit2:converter-gson:2.4.0"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:2.3.0"
+
+    //rx
+    implementation "io.reactivex.rxjava2:rxjava:2.1.16"
+    implementation 'com.trello.rxlifecycle2:rxlifecycle:2.2.1'
+    implementation 'com.trello.rxlifecycle2:rxlifecycle-kotlin:2.2.1'
+    implementation 'com.trello.rxlifecycle2:rxlifecycle-components:2.2.1'
+
+    //stecho
+    implementation 'com.facebook.stetho:stetho:1.5.0'
+    implementation 'com.facebook.stetho:stetho-okhttp3:1.5.0'
+
+}
