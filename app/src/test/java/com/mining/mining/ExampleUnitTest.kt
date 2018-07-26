@@ -11,6 +11,6 @@ import org.junit.Test
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
-        assertEquals("3691308F2A4C2F6983F2880D32E29C84", "3691308F2A4C2F6983F2880D32E29C84")
+        assertEquals("xx", "xx")
     }
 }
