@@ -7,7 +7,7 @@ data class OrderBody(
         var amount: String = "1",
         var price: String = "",
         var type: String = "buy",
-        var market: String = "CETBCH",
+        var market: String = "",
         var tonce: Long = System.currentTimeMillis(),
         var source_id: String = "123"
 )

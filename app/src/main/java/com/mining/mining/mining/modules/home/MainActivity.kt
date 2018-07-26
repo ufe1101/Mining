@@ -23,7 +23,8 @@ class MainActivity : RxAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        //requestMarketStatistics("CETBCH")
+//        requestMarketStatistics("CETUSDT")
+//        requestDifficulty()
     }
 
     private fun requestMarketStatistics(market: String) {
@@ -35,10 +36,13 @@ class MainActivity : RxAppCompatActivity() {
                     log(it.toString())
                     tv1.text = it.toString()
                     if (it.code == SUCCESS) {
+
                         val buy1price = it.data.ticker.buy
                         val sell1price = it.data.ticker.sell
+                        val meanPrice = ((buy1price.toDouble() + sell1price.toDouble()) / 2).toString()
 
-                        requestLimitOrder(OrderBody(price = buy1price))
+                        requestLimitOrder(OrderBody(price = meanPrice, type = "buy", market = market))
+                        requestLimitOrder(OrderBody(price = meanPrice, type = "sell", market = market))
 
                     } else {
                         toast(it?.message ?: "error")
