@@ -1,11 +1,10 @@
 package com.mining.mining.mining.modules.home.model.server
 
-import com.mining.mining.mining.modules.home.model.bean.AccountInfo
-import com.mining.mining.mining.modules.home.model.bean.Depth
-import com.mining.mining.mining.modules.home.model.bean.MiningDifficulty
-import com.mining.mining.mining.modules.home.model.bean.Reponse
+import com.mining.mining.mining.modules.home.model.bean.*
 import io.reactivex.Observable
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface HomeApi {
@@ -41,6 +40,12 @@ interface HomeApi {
     fun requestMarketList(@Query("access_id") access_id: String,
                            @Query("tonce") tonce: String): Observable<Reponse<List<String>>>
 
+
+    /**
+     * Place Limit Order
+     */
+    @POST("order/limit")
+    fun requestLimitOrder(@Body orderBody: OrderBody): Observable<Reponse<OrderResponse>>
 
 
 }

@@ -6,6 +6,7 @@ import com.coinex.trade.base.extension.loge
 import com.coinex.trade.base.extension.toast
 import com.mining.mining.R
 import com.mining.mining.base.server.RequestManager
+import com.mining.mining.mining.modules.home.model.bean.OrderBody
 import com.mining.mining.mining.modules.home.model.server.HomeApi
 import com.mining.mining.mining.util.ACCESS_ID
 import com.mining.mining.mining.util.SUCCESS
@@ -21,6 +22,27 @@ class MainActivity : RxAppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         requestDifficulty()
+    }
+
+    private fun requestLimitOrder(orderBody: OrderBody) {
+        val api = RequestManager.getApi(HomeApi::class.java)
+        api.requestLimitOrder(orderBody)
+                .bindToLifecycle(this)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    log(it.toString())
+                    tv1.text = it.toString()
+                    if (it.code == SUCCESS) {
+
+                    } else {
+                        toast(it?.message ?: "error")
+                    }
+
+                }, {
+                    toast(it?.message ?: "error")
+                    loge(it.toString())
+                })
     }
 
     private fun requestMarketList() {
