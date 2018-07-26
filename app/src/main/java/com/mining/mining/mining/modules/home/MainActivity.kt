@@ -21,7 +21,7 @@ class MainActivity : RxAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        requestDifficulty()
+        requestMarketList()
     }
 
     private fun requestLimitOrder(orderBody: OrderBody) {

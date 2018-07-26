@@ -2,12 +2,14 @@ package com.mining.mining.mining.util
 
 import android.net.Uri
 import com.coinex.trade.base.extension.md5
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import okhttp3.Request
 
 fun genSign(request: Request): String{
 
     val map: MutableMap<String, String> = mutableMapOf()
-
+    map.clear()
     when(request.method()) {
         "GET" -> {
             val query = request.url().query()
@@ -18,12 +20,15 @@ fun genSign(request: Request): String{
             }
         }
         "POST" -> {
-
+            val jsonObj: JsonObject = Gson().fromJson<JsonObject>(request.body().toString(),
+                    JsonObject::class.java)
+            jsonObj.keySet().forEach {
+                map[it] = jsonObj[it].asString
+            }
         }
         else -> {
             return ""
         }
-
     }
 
     val sortedKeys = map.keys.sorted()
