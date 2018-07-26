@@ -34,6 +34,13 @@ interface HomeApi {
                           @Query("merge") merge: String,
                           @Query("limit") limit: Int = 5): Observable<Reponse<Depth>>
 
+    /**
+     * Acquire Market List
+     */
+    @GET("market/list")
+    fun requestMarketList(@Query("access_id") access_id: String,
+                           @Query("tonce") tonce: String): Observable<Reponse<List<String>>>
+
 
 
 }

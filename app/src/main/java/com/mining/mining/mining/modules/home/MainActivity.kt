@@ -20,8 +20,28 @@ class MainActivity : RxAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        requestDifficulty()
+    }
 
-        requestDepth()
+    private fun requestMarketList() {
+        val api = RequestManager.getApi(HomeApi::class.java)
+        api.requestMarketList(ACCESS_ID, System.currentTimeMillis().toString())
+                .bindToLifecycle(this)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    log(it.toString())
+                    tv1.text = it.toString()
+                    if (it.code == SUCCESS) {
+
+                    } else {
+                        toast(it?.message ?: "error")
+                    }
+
+                }, {
+                    toast(it?.message ?: "error")
+                    loge(it.toString())
+                })
     }
 
     private fun requestDepth() {
