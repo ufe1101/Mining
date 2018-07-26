@@ -54,5 +54,13 @@ interface HomeApi {
                            @Query("id") id: Int,
                            @Query("market") market: String): Observable<Reponse<OrderResponse>>
 
+    /**
+     * Acquire Market Statistics
+     */
+    @GET("market/ticker")
+    fun requestMarketStatistics(@Query("access_id") access_id: String,
+                                @Query("tonce") tonce: String,
+                                @Query("market") market: String): Observable<Reponse<Statistics>>
+
 
 }

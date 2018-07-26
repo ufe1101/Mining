@@ -18,14 +18,39 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : RxAppCompatActivity() {
 
+    private var api = RequestManager.getApi(HomeApi::class.java)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        requestMarketList()
+        //requestMarketStatistics("CETBCH")
+    }
+
+    private fun requestMarketStatistics(market: String) {
+        api.requestMarketStatistics(ACCESS_ID, System.currentTimeMillis().toString(), market)
+                .bindToLifecycle(this)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    log(it.toString())
+                    tv1.text = it.toString()
+                    if (it.code == SUCCESS) {
+                        val buy1price = it.data.ticker.buy
+                        val sell1price = it.data.ticker.sell
+
+                        requestLimitOrder(OrderBody(price = buy1price))
+
+                    } else {
+                        toast(it?.message ?: "error")
+                    }
+
+                }, {
+                    toast(it?.message ?: "error")
+                    loge(it.toString())
+                })
     }
 
     private fun requestCancelOrder(id: Int, market: String) {
-        val api = RequestManager.getApi(HomeApi::class.java)
         api.requestCancelOrder(ACCESS_ID, System.currentTimeMillis().toString(), id, market)
                 .bindToLifecycle(this)
                 .subscribeOn(Schedulers.io())
@@ -46,7 +71,6 @@ class MainActivity : RxAppCompatActivity() {
     }
 
     private fun requestLimitOrder(orderBody: OrderBody) {
-        val api = RequestManager.getApi(HomeApi::class.java)
         api.requestLimitOrder(orderBody)
                 .bindToLifecycle(this)
                 .subscribeOn(Schedulers.io())
@@ -67,7 +91,6 @@ class MainActivity : RxAppCompatActivity() {
     }
 
     private fun requestMarketList() {
-        val api = RequestManager.getApi(HomeApi::class.java)
         api.requestMarketList(ACCESS_ID, System.currentTimeMillis().toString())
                 .bindToLifecycle(this)
                 .subscribeOn(Schedulers.io())
@@ -88,7 +111,6 @@ class MainActivity : RxAppCompatActivity() {
     }
 
     private fun requestDepth() {
-        val api = RequestManager.getApi(HomeApi::class.java)
         api.requestMarketDepth(ACCESS_ID, System.currentTimeMillis().toString(), "CETUSDT", "0.0000001")
                 .bindToLifecycle(this)
                 .subscribeOn(Schedulers.io())
@@ -109,7 +131,6 @@ class MainActivity : RxAppCompatActivity() {
     }
 
     private fun requestDifficulty() {
-        val api = RequestManager.getApi(HomeApi::class.java)
         api.requestDifficulty(ACCESS_ID, System.currentTimeMillis().toString())
                 .bindToLifecycle(this)
                 .subscribeOn(Schedulers.io())
@@ -130,7 +151,6 @@ class MainActivity : RxAppCompatActivity() {
     }
 
     private fun requestAccountInfo() {
-        val api = RequestManager.getApi(HomeApi::class.java)
         api.requestAccountInfo(ACCESS_ID, System.currentTimeMillis().toString())
                 .bindToLifecycle(this)
                 .subscribeOn(Schedulers.io())
@@ -150,4 +170,7 @@ class MainActivity : RxAppCompatActivity() {
                     loge(it.toString())
                 })
     }
+
+
+
 }

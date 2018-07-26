@@ -5,6 +5,9 @@ import com.coinex.trade.base.extension.md5
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import okhttp3.Request
+import okio.Buffer
+import java.nio.charset.Charset
+
 
 fun genSign(request: Request): String{
 
@@ -20,8 +23,16 @@ fun genSign(request: Request): String{
             }
         }
         "POST" -> {
-            val jsonObj: JsonObject = Gson().fromJson<JsonObject>(request.body().toString(),
+            val requestBody = request.body()
+            val buffer = Buffer()
+            requestBody?.writeTo(buffer)
+            var charset = Charset.forName("UTF-8")
+            charset = requestBody?.contentType()?.charset(charset) ?: charset
+            val params = buffer.readString(charset)
+
+            val jsonObj: JsonObject = Gson().fromJson<JsonObject>(params,
                     JsonObject::class.java)
+
             jsonObj.keySet().forEach {
                 map[it] = jsonObj[it].asString
             }

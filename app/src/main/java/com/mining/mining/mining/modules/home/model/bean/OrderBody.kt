@@ -1,11 +1,13 @@
 package com.mining.mining.mining.modules.home.model.bean
 
+import com.mining.mining.mining.util.ACCESS_ID
+
 data class OrderBody(
-        var access_id: String = "",
-        var amount: String = "",
+        var access_id: String = ACCESS_ID,
+        var amount: String = "1",
         var price: String = "",
-        var type: String = "",
-        var market: String = "",
-        var tonce: Long = 0,
-        var source_id: String = ""
+        var type: String = "buy",
+        var market: String = "CETBCH",
+        var tonce: Long = System.currentTimeMillis(),
+        var source_id: String = "123"
 )
