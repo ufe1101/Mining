@@ -26,7 +26,7 @@ class MainActivity : RxAppCompatActivity() {
 
     private fun requestDepth() {
         val api = RequestManager.getApi(HomeApi::class.java)
-        api.requestMarketDepth(ACCESS_ID, System.currentTimeMillis().toString(), "USDT", "0.00000001")
+        api.requestMarketDepth(ACCESS_ID, System.currentTimeMillis().toString(), "CETUSDT", "0.0000001")
                 .bindToLifecycle(this)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
