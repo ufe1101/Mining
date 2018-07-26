@@ -24,6 +24,27 @@ class MainActivity : RxAppCompatActivity() {
         requestMarketList()
     }
 
+    private fun requestCancelOrder(id: Int, market: String) {
+        val api = RequestManager.getApi(HomeApi::class.java)
+        api.requestCancelOrder(ACCESS_ID, System.currentTimeMillis().toString(), id, market)
+                .bindToLifecycle(this)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    log(it.toString())
+                    tv1.text = it.toString()
+                    if (it.code == SUCCESS) {
+
+                    } else {
+                        toast(it?.message ?: "error")
+                    }
+
+                }, {
+                    toast(it?.message ?: "error")
+                    loge(it.toString())
+                })
+    }
+
     private fun requestLimitOrder(orderBody: OrderBody) {
         val api = RequestManager.getApi(HomeApi::class.java)
         api.requestLimitOrder(orderBody)
