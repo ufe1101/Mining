@@ -11,6 +11,7 @@ import com.mining.mining.mining.modules.home.model.server.HomeApi
 import com.mining.mining.mining.util.ACCESS_ID
 import com.mining.mining.mining.util.SUCCESS
 import com.mining.mining.mining.util.getRandomAmount
+import com.mining.mining.mining.util.lockCet
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
 import com.trello.rxlifecycle2.kotlin.bindToLifecycle
 import io.reactivex.Observable
@@ -24,12 +25,15 @@ import java.util.concurrent.TimeUnit
 class MainActivity : RxAppCompatActivity() {
 
     private val api = RequestManager.getApi(HomeApi::class.java)
-    private val random = Random(1)
     private lateinit var dispose: Disposable
+    private val random = Random(1)
+    private var factor: Float = 1f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        requestDifficulty()
 
         bt1.setOnClickListener {
             Observable.interval(5, TimeUnit.SECONDS)
@@ -46,8 +50,6 @@ class MainActivity : RxAppCompatActivity() {
                     }, {
                         dispose = it
                     })
-
-
         }
         bt2.setOnClickListener {
             if (!dispose.isDisposed) {
@@ -67,7 +69,8 @@ class MainActivity : RxAppCompatActivity() {
                         val buy1price = it.data.ticker.buy
                         val sell1price = it.data.ticker.sell
                         val meanPrice = ((buy1price.toDouble() + sell1price.toDouble()) / 2).toString()
-                        val amount = getRandomAmount(random)
+
+                        val amount = getRandomAmount(random, factor)
                         log(amount)
 
                         requestLimitOrder(OrderBody(price = meanPrice, type = "buy", market = market, amount = amount))
@@ -168,15 +171,16 @@ class MainActivity : RxAppCompatActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     log(it.toString())
-                    tv1.text = it.toString()
                     if (it.code == SUCCESS) {
 
+                        factor = lockCet / 10000 * it.data.difficulty.toFloat() / 9.25f * 13.33f
+
+                        tv1.text = it.toString()
                     } else {
-                        toast(it?.message ?: "error")
+                        loge(it?.message ?: "error")
                     }
 
                 }, {
-                    toast(it?.message ?: "error")
                     loge(it.toString())
                 })
     }

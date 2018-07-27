@@ -2,8 +2,8 @@ package com.mining.mining.mining.util
 
 import java.util.*
 
-fun getRandomAmount(random: Random): String {
-    var randomAmount = random.nextFloat() * 13.33f
+fun getRandomAmount(random: Random, factor: Float): String {
+    var randomAmount = random.nextFloat() * factor
     if (randomAmount < 1) {
         randomAmount = 1f
     }
