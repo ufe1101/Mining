@@ -173,7 +173,7 @@ class MainActivity : RxAppCompatActivity() {
                     log(it.toString())
                     if (it.code == SUCCESS) {
 
-                        factor = lockCet / 10000 * it.data.difficulty.toFloat() / 9.25f * 13.33f
+                        factor = lockCet / 10000 * it.data.difficulty.toFloat() / 9.25f * 11f
 
                         tv1.text = it.toString()
                     } else {
