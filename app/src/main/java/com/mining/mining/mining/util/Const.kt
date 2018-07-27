@@ -9,3 +9,5 @@ const val SCHEME = "coinex"
 const val HOST = "com.coinex.mining"
 
 const val SUCCESS = 0
+
+const val lockCet = 10000
