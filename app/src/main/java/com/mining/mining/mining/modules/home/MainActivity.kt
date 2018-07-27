@@ -33,7 +33,7 @@ class MainActivity : RxAppCompatActivity() {
             Observable.interval(5, TimeUnit.SECONDS)
                     .bindToLifecycle(this)
                     .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
+                    .observeOn(Schedulers.io())
                     .subscribe {
                         requestMarketStatistics("CETUSDT")
                     }
@@ -44,16 +44,13 @@ class MainActivity : RxAppCompatActivity() {
         api.requestMarketStatistics(ACCESS_ID, System.currentTimeMillis().toString(), market)
                 .bindToLifecycle(this)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
                 .subscribe({
                     log(it.toString())
-                    tv1.text = it.toString()
                     if (it.code == SUCCESS) {
-
                         val buy1price = it.data.ticker.buy
                         val sell1price = it.data.ticker.sell
                         val meanPrice = ((buy1price.toDouble() + sell1price.toDouble()) / 2).toString()
-
                         val amount = getRandomAmount(random)
                         log(amount)
 
@@ -61,11 +58,10 @@ class MainActivity : RxAppCompatActivity() {
                         requestLimitOrder(OrderBody(price = meanPrice, type = "sell", market = market, amount = amount))
 
                     } else {
-                        toast(it?.message ?: "error")
+                        loge(it?.message ?: "error")
                     }
 
                 }, {
-                    toast(it?.message ?: "error")
                     loge(it.toString())
                 })
     }
@@ -101,11 +97,10 @@ class MainActivity : RxAppCompatActivity() {
                     if (it.code == SUCCESS) {
 
                     } else {
-                        toast(it?.message ?: "error")
+                        loge(it.toString())
                     }
 
                 }, {
-                    toast(it?.message ?: "error")
                     loge(it.toString())
                 })
     }
