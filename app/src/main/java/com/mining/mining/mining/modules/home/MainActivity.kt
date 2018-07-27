@@ -15,6 +15,7 @@ import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
 import com.trello.rxlifecycle2.kotlin.bindToLifecycle
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
@@ -22,8 +23,9 @@ import java.util.concurrent.TimeUnit
 
 class MainActivity : RxAppCompatActivity() {
 
-    private var api = RequestManager.getApi(HomeApi::class.java)
+    private val api = RequestManager.getApi(HomeApi::class.java)
     private val random = Random(1)
+    private lateinit var dispose: Disposable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,12 +33,26 @@ class MainActivity : RxAppCompatActivity() {
 
         bt1.setOnClickListener {
             Observable.interval(5, TimeUnit.SECONDS)
+                    .doOnDispose { log("Unsubscribing subscription") }
                     .bindToLifecycle(this)
                     .subscribeOn(Schedulers.io())
                     .observeOn(Schedulers.io())
-                    .subscribe {
+                    .subscribe({
                         requestMarketStatistics("CETUSDT")
-                    }
+                    }, {
+
+                    }, {
+
+                    }, {
+                        dispose = it
+                    })
+
+
+        }
+        bt2.setOnClickListener {
+            if (!dispose.isDisposed) {
+                dispose.dispose()
+            }
         }
     }
 
