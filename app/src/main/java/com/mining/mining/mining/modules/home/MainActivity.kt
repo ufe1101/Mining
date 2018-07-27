@@ -25,9 +25,9 @@ import java.util.concurrent.TimeUnit
 class MainActivity : RxAppCompatActivity() {
 
     private val api = RequestManager.getApi(HomeApi::class.java)
-    private lateinit var dispose: Disposable
     private val random = Random(1)
     private var factor: Float = 1f
+    private lateinit var dispose: Disposable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
