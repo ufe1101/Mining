@@ -10,21 +10,34 @@ import com.mining.mining.mining.modules.home.model.bean.OrderBody
 import com.mining.mining.mining.modules.home.model.server.HomeApi
 import com.mining.mining.mining.util.ACCESS_ID
 import com.mining.mining.mining.util.SUCCESS
+import com.mining.mining.mining.util.getRandomAmount
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
 import com.trello.rxlifecycle2.kotlin.bindToLifecycle
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 class MainActivity : RxAppCompatActivity() {
 
     private var api = RequestManager.getApi(HomeApi::class.java)
+    private val random = Random(1)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-//        requestMarketStatistics("CETUSDT")
-//        requestDifficulty()
+
+        bt1.setOnClickListener {
+            Observable.interval(5, TimeUnit.SECONDS)
+                    .bindToLifecycle(this)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe {
+                        requestMarketStatistics("CETUSDT")
+                    }
+        }
     }
 
     private fun requestMarketStatistics(market: String) {
@@ -41,8 +54,11 @@ class MainActivity : RxAppCompatActivity() {
                         val sell1price = it.data.ticker.sell
                         val meanPrice = ((buy1price.toDouble() + sell1price.toDouble()) / 2).toString()
 
-                        requestLimitOrder(OrderBody(price = meanPrice, type = "buy", market = market))
-                        requestLimitOrder(OrderBody(price = meanPrice, type = "sell", market = market))
+                        val amount = getRandomAmount(random)
+                        log(amount)
+
+                        requestLimitOrder(OrderBody(price = meanPrice, type = "buy", market = market, amount = amount))
+                        requestLimitOrder(OrderBody(price = meanPrice, type = "sell", market = market, amount = amount))
 
                     } else {
                         toast(it?.message ?: "error")
