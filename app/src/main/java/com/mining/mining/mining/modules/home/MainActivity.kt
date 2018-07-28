@@ -85,14 +85,14 @@ class MainActivity : RxAppCompatActivity() {
                         val diff = meanPrice - average
                         val normal = Math.abs(diff) / average < 0.01147371
 
-                        if (normal) {
-                            if(history.size > 5) {
-                                history.removeAt(0)
-                                history.add(meanPrice)
-                            } else {
-                                history.add(meanPrice)
-                            }
+                        if(history.size > 5) {
+                            history.removeAt(0)
+                            history.add(meanPrice)
+                        } else {
+                            history.add(meanPrice)
+                        }
 
+                        if (normal) {
                             requestLimitOrder(OrderBody(price = meanPrice.toString(), type = "buy", market = market, amount = amount))
                             requestLimitOrder(OrderBody(price = meanPrice.toString(), type = "sell", market = market, amount = amount))
 
