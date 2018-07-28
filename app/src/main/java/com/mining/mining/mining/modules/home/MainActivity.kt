@@ -12,8 +12,9 @@ import com.mining.mining.mining.util.ACCESS_ID
 import com.mining.mining.mining.util.SUCCESS
 import com.mining.mining.mining.util.getRandomAmount
 import com.mining.mining.mining.util.lockCet
+import com.trello.rxlifecycle2.android.ActivityEvent
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
-import com.trello.rxlifecycle2.kotlin.bindToLifecycle
+import com.trello.rxlifecycle2.kotlin.bindUntilEvent
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -26,19 +27,25 @@ class MainActivity : RxAppCompatActivity() {
 
     private val api = RequestManager.getApi(HomeApi::class.java)
     private val random = Random(1)
-    private var factor: Float = 1f
+    private var factor: Float = 12.39f
     private lateinit var dispose: Disposable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        requestDifficulty()
+        Observable.interval(15, TimeUnit.MINUTES)
+                .bindUntilEvent(this, ActivityEvent.DESTROY)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe{
+                    requestDifficulty()
+                }
 
         bt1.setOnClickListener {
             Observable.interval(5, TimeUnit.SECONDS)
                     .doOnDispose { log("Unsubscribing subscription") }
-                    .bindToLifecycle(this)
+                    .bindUntilEvent(this, ActivityEvent.DESTROY)
                     .subscribeOn(Schedulers.io())
                     .observeOn(Schedulers.io())
                     .subscribe({
@@ -51,6 +58,7 @@ class MainActivity : RxAppCompatActivity() {
                         dispose = it
                     })
         }
+
         bt2.setOnClickListener {
             if (!dispose.isDisposed) {
                 dispose.dispose()
@@ -60,7 +68,7 @@ class MainActivity : RxAppCompatActivity() {
 
     private fun requestMarketStatistics(market: String) {
         api.requestMarketStatistics(ACCESS_ID, System.currentTimeMillis().toString(), market)
-                .bindToLifecycle(this)
+                .bindUntilEvent(this, ActivityEvent.DESTROY)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .subscribe({
@@ -87,7 +95,7 @@ class MainActivity : RxAppCompatActivity() {
 
     private fun requestCancelOrder(id: Int, market: String) {
         api.requestCancelOrder(ACCESS_ID, System.currentTimeMillis().toString(), id, market)
-                .bindToLifecycle(this)
+                .bindUntilEvent(this, ActivityEvent.DESTROY)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
@@ -107,7 +115,7 @@ class MainActivity : RxAppCompatActivity() {
 
     private fun requestLimitOrder(orderBody: OrderBody) {
         api.requestLimitOrder(orderBody)
-                .bindToLifecycle(this)
+                .bindUntilEvent(this, ActivityEvent.DESTROY)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
@@ -126,7 +134,7 @@ class MainActivity : RxAppCompatActivity() {
 
     private fun requestMarketList() {
         api.requestMarketList(ACCESS_ID, System.currentTimeMillis().toString())
-                .bindToLifecycle(this)
+                .bindUntilEvent(this, ActivityEvent.DESTROY)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
@@ -146,7 +154,7 @@ class MainActivity : RxAppCompatActivity() {
 
     private fun requestDepth() {
         api.requestMarketDepth(ACCESS_ID, System.currentTimeMillis().toString(), "CETUSDT", "0.0000001")
-                .bindToLifecycle(this)
+                .bindUntilEvent(this, ActivityEvent.DESTROY)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
@@ -166,7 +174,7 @@ class MainActivity : RxAppCompatActivity() {
 
     private fun requestDifficulty() {
         api.requestDifficulty(ACCESS_ID, System.currentTimeMillis().toString())
-                .bindToLifecycle(this)
+                .bindUntilEvent(this, ActivityEvent.DESTROY)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
@@ -187,7 +195,7 @@ class MainActivity : RxAppCompatActivity() {
 
     private fun requestAccountInfo() {
         api.requestAccountInfo(ACCESS_ID, System.currentTimeMillis().toString())
-                .bindToLifecycle(this)
+                .bindUntilEvent(this, ActivityEvent.DESTROY)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
