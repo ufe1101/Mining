@@ -11,7 +11,6 @@ import com.mining.mining.mining.modules.home.model.server.HomeApi
 import com.mining.mining.mining.util.ACCESS_ID
 import com.mining.mining.mining.util.SUCCESS
 import com.mining.mining.mining.util.getRandomAmount
-import com.mining.mining.mining.util.lockCet
 import com.trello.rxlifecycle2.android.ActivityEvent
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
 import com.trello.rxlifecycle2.kotlin.bindUntilEvent
@@ -29,6 +28,7 @@ class MainActivity : RxAppCompatActivity() {
     private val random = Random(1)
     private var factor: Float = 12.39f
     private lateinit var dispose: Disposable
+    private val history = mutableListOf<Double>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,13 +76,34 @@ class MainActivity : RxAppCompatActivity() {
                     if (it.code == SUCCESS) {
                         val buy1price = it.data.ticker.buy
                         val sell1price = it.data.ticker.sell
-                        val meanPrice = ((buy1price.toDouble() + sell1price.toDouble()) / 2).toString()
+                        val meanPrice = (buy1price.toDouble() + sell1price.toDouble()) / 2
 
                         val amount = getRandomAmount(random, factor)
                         log(amount)
 
-                        requestLimitOrder(OrderBody(price = meanPrice, type = "buy", market = market, amount = amount))
-                        requestLimitOrder(OrderBody(price = meanPrice, type = "sell", market = market, amount = amount))
+                        val average = history.average()
+                        val diff = meanPrice - average
+                        val normal = Math.abs(diff) / average < 0.01147371
+
+                        if (normal) {
+                            if(history.size > 5) {
+                                history.removeAt(0)
+                                history.add(meanPrice)
+                            } else {
+                                history.add(meanPrice)
+                            }
+
+                            requestLimitOrder(OrderBody(price = meanPrice.toString(), type = "buy", market = market, amount = amount))
+                            requestLimitOrder(OrderBody(price = meanPrice.toString(), type = "sell", market = market, amount = amount))
+
+                        } else {
+                            log("anomaly meanPrice = $meanPrice" )
+                            if(diff > 0) {
+                                requestLimitOrder(OrderBody(price = meanPrice.toString(), type = "sell", market = market, amount = amount))
+                            } else {
+                                requestLimitOrder(OrderBody(price = meanPrice.toString(), type = "buy", market = market, amount = amount))
+                            }
+                        }
 
                     } else {
                         loge(it?.message ?: "error")
@@ -181,7 +202,7 @@ class MainActivity : RxAppCompatActivity() {
                     log(it.toString())
                     if (it.code == SUCCESS) {
 
-                        factor = lockCet / 10000 * it.data.difficulty.toFloat() / 9.25f * 12.39f
+                        factor = it.data.difficulty.toFloat() / 9.25f * 12.39f
 
                         tv1.text = it.toString()
                     } else {
