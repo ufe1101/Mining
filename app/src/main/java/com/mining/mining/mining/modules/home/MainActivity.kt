@@ -34,7 +34,7 @@ class MainActivity : RxAppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        Observable.interval(15, TimeUnit.MINUTES)
+        Observable.interval(0,15, TimeUnit.MINUTES)
                 .bindUntilEvent(this, ActivityEvent.DESTROY)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
