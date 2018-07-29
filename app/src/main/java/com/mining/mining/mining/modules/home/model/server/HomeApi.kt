@@ -62,11 +62,4 @@ interface HomeApi {
                                 @Query("tonce") tonce: String,
                                 @Query("market") market: String): Observable<Reponse<Statistics>>
 
-    /**
-     * My Mining
-     */
-    @GET("https://www.coinex.com/res/mining/mining/history/my")
-    fun requestMyMining(@Query("start_time") start_time: Long): Observable<Reponse<Mining>>
-
-
 }
