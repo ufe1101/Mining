@@ -83,7 +83,7 @@ class MainActivity : RxAppCompatActivity() {
 
                         val average = history.average()
                         val diff = meanPrice - average
-                        val normal = Math.abs(diff) / average < 0.01147371
+                        val normal = Math.abs(diff) / average < 0.005
 
                         if(history.size > 5) {
                             history.removeAt(0)
@@ -98,11 +98,11 @@ class MainActivity : RxAppCompatActivity() {
 
                         } else {
                             log("anomaly meanPrice = $meanPrice" )
-                            if(diff > 0) {
-                                requestLimitOrder(OrderBody(price = meanPrice.toString(), type = "sell", market = market, amount = amount))
-                            } else {
-                                requestLimitOrder(OrderBody(price = meanPrice.toString(), type = "buy", market = market, amount = amount))
-                            }
+//                            if(diff > 0) {
+//                                requestLimitOrder(OrderBody(price = meanPrice.toString(), type = "sell", market = market, amount = amount))
+//                            } else {
+//                                requestLimitOrder(OrderBody(price = meanPrice.toString(), type = "buy", market = market, amount = amount))
+//                            }
                         }
 
                     } else {
