@@ -83,7 +83,7 @@ class MainActivity : RxAppCompatActivity() {
 
                         val average = history.average()
                         val diff = meanPrice - average
-                        val normal = Math.abs(diff) / average < 0.005
+                        val normal = Math.abs(diff) / average < 0.003
 
                         if(history.size > 5) {
                             history.removeAt(0)
