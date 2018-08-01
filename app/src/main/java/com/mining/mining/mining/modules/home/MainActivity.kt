@@ -202,7 +202,7 @@ class MainActivity : RxAppCompatActivity() {
                     log(it.toString())
                     if (it.code == SUCCESS) {
 
-                        factor = it.data.difficulty.toFloat() * 1.32096f
+                        factor = it.data.difficulty.toFloat() * 3.949047f
 
                         tv1.text = it.toString()
                     } else {
