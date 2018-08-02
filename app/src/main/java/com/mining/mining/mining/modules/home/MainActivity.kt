@@ -34,36 +34,38 @@ class MainActivity : RxAppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        Observable.interval(0,15, TimeUnit.MINUTES)
-                .bindUntilEvent(this, ActivityEvent.DESTROY)
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .subscribe{
-                    requestDifficulty()
-                }
+//        Observable.interval(0,15, TimeUnit.MINUTES)
+//                .bindUntilEvent(this, ActivityEvent.DESTROY)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(Schedulers.io())
+//                .subscribe{
+//                    requestDifficulty()
+//                }
 
-        bt1.setOnClickListener {
-            Observable.interval(5, TimeUnit.SECONDS)
-                    .doOnDispose { log("Unsubscribing subscription") }
-                    .bindUntilEvent(this, ActivityEvent.DESTROY)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(Schedulers.io())
-                    .subscribe({
-                        requestMarketStatistics("CETUSDT")
-                    }, {
+        requestAccountInfo()
 
-                    }, {
-
-                    }, {
-                        dispose = it
-                    })
-        }
-
-        bt2.setOnClickListener {
-            if (!dispose.isDisposed) {
-                dispose.dispose()
-            }
-        }
+//        bt1.setOnClickListener {
+//            Observable.interval(5, TimeUnit.SECONDS)
+//                    .doOnDispose { log("Unsubscribing subscription") }
+//                    .bindUntilEvent(this, ActivityEvent.DESTROY)
+//                    .subscribeOn(Schedulers.io())
+//                    .observeOn(Schedulers.io())
+//                    .subscribe({
+//                        requestMarketStatistics("CETUSDT")
+//                    }, {
+//
+//                    }, {
+//
+//                    }, {
+//                        dispose = it
+//                    })
+//        }
+//
+//        bt2.setOnClickListener {
+//            if (!dispose.isDisposed) {
+//                dispose.dispose()
+//            }
+//        }
     }
 
     private fun requestMarketStatistics(market: String) {
@@ -202,7 +204,7 @@ class MainActivity : RxAppCompatActivity() {
                     log(it.toString())
                     if (it.code == SUCCESS) {
 
-                        factor = it.data.difficulty.toFloat() * 0.96f
+                        factor = it.data.difficulty.toFloat() * 1.39354f
 
                         tv1.text = it.toString()
                     } else {
