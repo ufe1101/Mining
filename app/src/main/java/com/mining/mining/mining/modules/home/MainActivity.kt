@@ -5,7 +5,7 @@ import com.coinex.trade.base.extension.log
 import com.coinex.trade.base.extension.loge
 import com.coinex.trade.base.extension.toast
 import com.mining.mining.R
-import com.mining.mining.base.server.RequestManager
+import com.mining.mining.base.server.http.RequestManager
 import com.mining.mining.mining.modules.home.model.bean.OrderBody
 import com.mining.mining.mining.modules.home.model.server.HomeApi
 import com.mining.mining.mining.util.ACCESS_ID

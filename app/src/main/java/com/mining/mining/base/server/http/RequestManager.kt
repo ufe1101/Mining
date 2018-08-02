@@ -1,4 +1,4 @@
-package com.mining.mining.base.server
+package com.mining.mining.base.server.http
 
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.mining.mining.mining.util.genSign

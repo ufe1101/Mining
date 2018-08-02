@@ -1,4 +1,4 @@
-package com.mining.mining.base.server
+package com.mining.mining.base.server.http
 
 import com.mining.mining.mining.util.ACCESS_ID
 import okhttp3.Interceptor

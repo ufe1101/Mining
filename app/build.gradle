@@ -10,6 +10,10 @@ def secretPropertiesFile = rootProject.file('secret.properties')
 def secretProperties = new Properties()
 secretProperties.load(new FileInputStream(secretPropertiesFile))
 
+repositories {
+    maven { url 'https://jitpack.io' }
+}
+
 android {
     compileSdkVersion 28
     defaultConfig {
@@ -80,5 +84,8 @@ dependencies {
     //stecho
     implementation 'com.facebook.stetho:stetho:1.5.0'
     implementation 'com.facebook.stetho:stetho-okhttp3:1.5.0'
+
+    //scarlet
+    implementation 'com.github.tinder.scarlet:scarlet:0.1.4'
 
 }
