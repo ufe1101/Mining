@@ -5,7 +5,7 @@ import com.coinex.trade.base.extension.log
 import com.coinex.trade.base.extension.loge
 import com.coinex.trade.base.extension.toast
 import com.mining.mining.R
-import com.mining.mining.base.server.http.RequestManager
+import com.mining.mining.base.server.http.HttpManager
 import com.mining.mining.mining.modules.home.model.bean.OrderBody
 import com.mining.mining.mining.modules.home.model.server.HomeApi
 import com.mining.mining.mining.util.ACCESS_ID
@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit
 
 class MainActivity : RxAppCompatActivity() {
 
-    private val api = RequestManager.getApi(HomeApi::class.java)
+    private val api = HttpManager.getApi(HomeApi::class.java)
     private val random = Random(1)
     private var factor: Float = 12.39f
     private lateinit var dispose: Disposable
