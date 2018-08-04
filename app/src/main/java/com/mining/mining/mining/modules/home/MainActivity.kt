@@ -1,13 +1,14 @@
 package com.mining.mining.mining.modules.home
 
 import android.os.Bundle
+import com.coinex.trade.base.extension.isEmpty
 import com.coinex.trade.base.extension.log
 import com.coinex.trade.base.extension.loge
 import com.coinex.trade.base.extension.toast
 import com.mining.mining.R
 import com.mining.mining.base.server.http.HttpManager
 import com.mining.mining.mining.modules.home.model.bean.OrderBody
-import com.mining.mining.mining.modules.home.model.server.HomeApi
+import com.mining.mining.mining.modules.home.model.server.HttpApi
 import com.mining.mining.mining.util.ACCESS_ID
 import com.mining.mining.mining.util.SUCCESS
 import com.mining.mining.mining.util.getRandomAmount
@@ -16,58 +17,47 @@ import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
 import com.trello.rxlifecycle2.kotlin.bindUntilEvent
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 
+
+
 class MainActivity : RxAppCompatActivity() {
 
-    private val api = HttpManager.getApi(HomeApi::class.java)
+    private val httpApi = HttpManager.getApi(HttpApi::class.java)
     private val random = Random(1)
-    private var factor: Float = 12.39f
-    private lateinit var dispose: Disposable
+    private var y: Float = 0f
     private val history = mutableListOf<Double>()
+    private var x = 2.72519f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        Observable.interval(0,15, TimeUnit.MINUTES)
-                .bindUntilEvent(this, ActivityEvent.DESTROY)
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .subscribe{
-                    requestDifficulty()
-                }
+        tv_factor.text = x.toString()
+        et1.setText(x.toString())
 
         bt1.setOnClickListener {
-            Observable.interval(5, TimeUnit.SECONDS)
-                    .doOnDispose { log("Unsubscribing subscription") }
-                    .bindUntilEvent(this, ActivityEvent.DESTROY)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(Schedulers.io())
-                    .subscribe({
-                        requestMarketStatistics("CETUSDT")
-                    }, {
-
-                    }, {
-
-                    }, {
-                        dispose = it
-                    })
+            placeOrder("CETUSDT")
         }
 
-        bt2.setOnClickListener {
-            if (!dispose.isDisposed) {
-                dispose.dispose()
+        bt_ok.setOnClickListener {
+            val inputText = et1.text.toString()
+            if(inputText.isEmpty()) {
+                toast("Please input y!")
+            } else {
+                x = inputText.toFloat()
+                tv_factor.text = inputText
+                requestDifficulty()
             }
         }
     }
 
-    private fun requestMarketStatistics(market: String) {
-        api.requestMarketStatistics(ACCESS_ID, System.currentTimeMillis().toString(), market)
+    private fun placeOrder(market: String) {
+        Observable.interval(5, TimeUnit.SECONDS)
+                .flatMap { httpApi.requestMarketStatistics(ACCESS_ID, System.currentTimeMillis().toString(), market) }
                 .bindUntilEvent(this, ActivityEvent.DESTROY)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
@@ -78,7 +68,7 @@ class MainActivity : RxAppCompatActivity() {
                         val sell1price = it.data.ticker.sell
                         val meanPrice = (buy1price.toDouble() + sell1price.toDouble()) / 2
 
-                        val amount = getRandomAmount(random, factor)
+                        val amount = getRandomAmount(random, y)
                         log(amount)
 
                         val average = history.average()
@@ -98,11 +88,6 @@ class MainActivity : RxAppCompatActivity() {
 
                         } else {
                             log("anomaly meanPrice = $meanPrice" )
-//                            if(diff > 0) {
-//                                requestLimitOrder(OrderBody(price = meanPrice.toString(), type = "sell", market = market, amount = amount))
-//                            } else {
-//                                requestLimitOrder(OrderBody(price = meanPrice.toString(), type = "buy", market = market, amount = amount))
-//                            }
                         }
 
                     } else {
@@ -115,7 +100,7 @@ class MainActivity : RxAppCompatActivity() {
     }
 
     private fun requestCancelOrder(id: Int, market: String) {
-        api.requestCancelOrder(ACCESS_ID, System.currentTimeMillis().toString(), id, market)
+        httpApi.requestCancelOrder(ACCESS_ID, System.currentTimeMillis().toString(), id, market)
                 .bindUntilEvent(this, ActivityEvent.DESTROY)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -135,7 +120,7 @@ class MainActivity : RxAppCompatActivity() {
     }
 
     private fun requestLimitOrder(orderBody: OrderBody) {
-        api.requestLimitOrder(orderBody)
+        httpApi.requestLimitOrder(orderBody)
                 .bindUntilEvent(this, ActivityEvent.DESTROY)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -154,7 +139,7 @@ class MainActivity : RxAppCompatActivity() {
     }
 
     private fun requestMarketList() {
-        api.requestMarketList(ACCESS_ID, System.currentTimeMillis().toString())
+        httpApi.requestMarketList(ACCESS_ID, System.currentTimeMillis().toString())
                 .bindUntilEvent(this, ActivityEvent.DESTROY)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -174,7 +159,7 @@ class MainActivity : RxAppCompatActivity() {
     }
 
     private fun requestDepth() {
-        api.requestMarketDepth(ACCESS_ID, System.currentTimeMillis().toString(), "CETUSDT", "0.0000001")
+        httpApi.requestMarketDepth(ACCESS_ID, System.currentTimeMillis().toString(), "CETUSDT", "0.0000001")
                 .bindUntilEvent(this, ActivityEvent.DESTROY)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -194,16 +179,15 @@ class MainActivity : RxAppCompatActivity() {
     }
 
     private fun requestDifficulty() {
-        api.requestDifficulty(ACCESS_ID, System.currentTimeMillis().toString())
+        Observable.interval(0,15, TimeUnit.MINUTES)
+                .flatMap { httpApi.requestDifficulty(ACCESS_ID, System.currentTimeMillis().toString()) }
                 .bindUntilEvent(this, ActivityEvent.DESTROY)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     log(it.toString())
                     if (it.code == SUCCESS) {
-
-                        factor = it.data.difficulty.toFloat() * 0.65396f
-
+                        y = it.data.difficulty.toFloat() * x
                         tv1.text = it.toString()
                     } else {
                         loge(it?.message ?: "error")
@@ -215,7 +199,7 @@ class MainActivity : RxAppCompatActivity() {
     }
 
     private fun requestAccountInfo() {
-        api.requestAccountInfo(ACCESS_ID, System.currentTimeMillis().toString())
+        httpApi.requestAccountInfo(ACCESS_ID, System.currentTimeMillis().toString())
                 .bindUntilEvent(this, ActivityEvent.DESTROY)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -234,7 +218,5 @@ class MainActivity : RxAppCompatActivity() {
                     loge(it.toString())
                 })
     }
-
-
 
 }

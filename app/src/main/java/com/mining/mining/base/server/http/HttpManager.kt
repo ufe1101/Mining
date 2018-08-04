@@ -1,7 +1,7 @@
 package com.mining.mining.base.server.http
 
 import com.facebook.stetho.okhttp3.StethoInterceptor
-import com.mining.mining.mining.util.genSign
+import com.mining.mining.mining.util.signHttp
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -19,7 +19,7 @@ object HttpManager {
                 .addInterceptor{
                     val request = it.request().newBuilder()
                             .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36")
-                            .addHeader("authorization", genSign(it.request()))
+                            .addHeader("authorization", signHttp(it.request()))
                             .build()
 
        it.proceed(request)

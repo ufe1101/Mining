@@ -10,9 +10,9 @@ def secretPropertiesFile = rootProject.file('secret.properties')
 def secretProperties = new Properties()
 secretProperties.load(new FileInputStream(secretPropertiesFile))
 
-repositories {
-    maven { url 'https://jitpack.io' }
-}
+//repositories {
+//    maven { url 'https://jitpack.io' }
+//}
 
 android {
     compileSdkVersion 28
@@ -50,10 +50,10 @@ dependencies {
     //android
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:multidex:1.0.3'
-    implementation 'com.android.support:appcompat-v7:28.0.0-alpha3'
-    implementation 'com.android.support:design:28.0.0-alpha3'
-    implementation "com.android.support:support-v4:28.0.0-alpha3"
-    implementation "com.android.support:recyclerview-v7:28.0.0-alpha3"
+    implementation 'com.android.support:appcompat-v7:28.0.0-beta01'
+    implementation 'com.android.support:design:28.0.0-beta01'
+    implementation "com.android.support:support-v4:28.0.0-beta01"
+    implementation "com.android.support:recyclerview-v7:28.0.0-beta01"
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
 
     //kotlin
@@ -89,10 +89,10 @@ dependencies {
     implementation 'com.facebook.stetho:stetho-okhttp3:1.5.0'
 
     //scarlet
-    implementation 'com.github.tinder.scarlet:scarlet:0.1.4'
-    implementation 'com.github.tinder.scarlet:scarlet-websocket-okhttp:0.1.4'
-    implementation 'com.github.tinder.scarlet:scarlet-lifecycle-android:0.1.4'
-    implementation 'com.github.tinder.scarlet:scarlet-message-adapter-gson:0.1.4'
-    implementation 'com.github.tinder.scarlet:scarlet-stream-adapter-rxjava2:0.1.4'
+//    implementation 'com.github.tinder.scarlet:scarlet:0.1.4'
+//    implementation 'com.github.tinder.scarlet:scarlet-websocket-okhttp:0.1.4'
+//    implementation 'com.github.tinder.scarlet:scarlet-lifecycle-android:0.1.4'
+//    implementation 'com.github.tinder.scarlet:scarlet-message-adapter-gson:0.1.4'
+//    implementation 'com.github.tinder.scarlet:scarlet-stream-adapter-rxjava2:0.1.4'
 
 }

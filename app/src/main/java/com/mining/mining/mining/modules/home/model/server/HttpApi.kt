@@ -4,7 +4,7 @@ import com.mining.mining.mining.modules.home.model.bean.*
 import io.reactivex.Observable
 import retrofit2.http.*
 
-interface HomeApi {
+interface HttpApi {
 
     /**
      * Inquire Account Info

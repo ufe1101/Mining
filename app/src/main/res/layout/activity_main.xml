@@ -11,20 +11,43 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:layout_above="@+id/bt1">
+
+        <TextView
+            android:id="@+id/tv_factor"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_height="match_parent" />
+
+        <EditText
+            android:id="@+id/et1"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_height="match_parent"
+            android:hint="Input factor"/>
+
+        <Button
+            android:id="@+id/bt_ok"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_height="match_parent"
+            android:text="Ok"/>
+
+    </LinearLayout>
+
     <Button
         android:id="@+id/bt1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/bt2"
-        android:padding="5dp"
-        android:text="Start" />
-
-    <Button
-        android:id="@+id/bt2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:padding="5dp"
-        android:text="Stop" />
+        android:text="Start" />
 
 </RelativeLayout>

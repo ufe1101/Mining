@@ -9,7 +9,7 @@ import okio.Buffer
 import java.nio.charset.Charset
 
 
-fun genSign(request: Request): String{
+fun signHttp(request: Request): String{
 
     val map: MutableMap<String, String> = mutableMapOf()
     map.clear()
@@ -54,4 +54,10 @@ fun genSign(request: Request): String{
 
     val uri = builder.build()
     return uri.query.md5().toUpperCase()
+}
+
+
+fun signWs(tonce: Long): String{
+    val origin = "access_id=$ACCESS_ID&tonce=$tonce&secret_key=$SECRET_KEY"
+    return origin.md5().toUpperCase()
 }
