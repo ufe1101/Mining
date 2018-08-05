@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit
 
 class MainActivity : RxAppCompatActivity() {
 
-    private val DEFAULT_X = 2.72519f
+    private val DEFAULT_X = 1.319331f
     private val httpApi = HttpManager.getApi(HttpApi::class.java)
     private val random = Random(1)
     private var y: Float = 0f
