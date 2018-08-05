@@ -1,7 +1,7 @@
 package com.mining.mining.mining.util
 
 import android.net.Uri
-import com.coinex.trade.base.extension.md5
+import com.mining.mining.base.extension.md5
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import okhttp3.Request

@@ -1,4 +1,4 @@
-package com.coinex.trade.base.extension
+package com.mining.mining.base.extension
 
 import android.content.Context
 import android.os.Bundle

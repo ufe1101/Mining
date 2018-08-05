@@ -1,12 +1,14 @@
 package com.mining.mining.mining.modules.home
 
 import android.os.Bundle
-import com.coinex.trade.base.extension.isEmpty
-import com.coinex.trade.base.extension.log
-import com.coinex.trade.base.extension.loge
-import com.coinex.trade.base.extension.toast
 import com.mining.mining.R
+import com.mining.mining.base.extension.isEmpty
+import com.mining.mining.base.extension.log
+import com.mining.mining.base.extension.loge
+import com.mining.mining.base.extension.toast
+import com.mining.mining.base.prefs.Sp
 import com.mining.mining.base.server.http.HttpManager
+import com.mining.mining.base.util.AppModule
 import com.mining.mining.mining.modules.home.model.bean.OrderBody
 import com.mining.mining.mining.modules.home.model.server.HttpApi
 import com.mining.mining.mining.util.ACCESS_ID
@@ -22,19 +24,19 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-
-
 class MainActivity : RxAppCompatActivity() {
 
+    private val DEFAULT_X = 2.72519f
     private val httpApi = HttpManager.getApi(HttpApi::class.java)
     private val random = Random(1)
     private var y: Float = 0f
     private val history = mutableListOf<Double>()
-    private var x = 2.72519f
+    private var x = DEFAULT_X
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        x = Sp.from(AppModule.provideContext()).read().getFloat("x", DEFAULT_X)
 
         tv_factor.text = x.toString()
         et1.setText(x.toString())
@@ -48,8 +50,10 @@ class MainActivity : RxAppCompatActivity() {
             if(inputText.isEmpty()) {
                 toast("Please input y!")
             } else {
-                x = inputText.toFloat()
                 tv_factor.text = inputText
+                x = inputText.toFloat()
+                Sp.from(this).put("x", x)
+
                 requestDifficulty()
             }
         }
