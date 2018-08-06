@@ -54,13 +54,16 @@ class MainActivity : RxAppCompatActivity() {
                 x = inputText.toFloat()
                 Sp.from(this).put("x", x)
 
-                Observable.interval(15, TimeUnit.MINUTES)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(Schedulers.io())
-                        .subscribe { requestDifficulty() }
-
+                intervalDifficulty()
             }
         }
+    }
+
+    private fun intervalDifficulty() {
+        Observable.interval(0,15, TimeUnit.MINUTES)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe { requestDifficulty() }
     }
 
     private fun placeOrder(market: String) {
