@@ -29,7 +29,7 @@ class MainActivity : RxAppCompatActivity() {
     private val DEFAULT_X = 1.319331f
     private val httpApi = HttpManager.getApi(HttpApi::class.java)
     private val random = Random(1)
-    private var y: Float = 0f
+    private var y: Float = 1f
     private val history = mutableListOf<Double>()
     private var x = DEFAULT_X
 
@@ -64,9 +64,10 @@ class MainActivity : RxAppCompatActivity() {
                 .flatMap { httpApi.requestMarketStatistics(ACCESS_ID, System.currentTimeMillis().toString(), market) }
                 .bindUntilEvent(this, ActivityEvent.DESTROY)
                 .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     log(it.toString())
+                    tv1.text = it.toString()
                     if (it.code == SUCCESS) {
                         val buy1price = it.data.ticker.buy
                         val sell1price = it.data.ticker.sell
@@ -100,6 +101,7 @@ class MainActivity : RxAppCompatActivity() {
 
                 }, {
                     loge(it.toString())
+                    tv1.text = it.toString()
                 })
     }
 
@@ -139,6 +141,7 @@ class MainActivity : RxAppCompatActivity() {
 
                 }, {
                     loge(it.toString())
+                    tv1.text = it.toString()
                 })
     }
 
@@ -190,15 +193,17 @@ class MainActivity : RxAppCompatActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     log(it.toString())
+                    tv1.text = it.toString()
+
                     if (it.code == SUCCESS) {
                         y = it.data.difficulty.toFloat() * x
-                        tv1.text = it.toString()
                     } else {
                         loge(it?.message ?: "error")
                     }
 
                 }, {
                     loge(it.toString())
+                    tv1.text = it.toString()
                 })
     }
 
