@@ -54,7 +54,11 @@ class MainActivity : RxAppCompatActivity() {
                 x = inputText.toFloat()
                 Sp.from(this).put("x", x)
 
-                requestDifficulty()
+                Observable.interval(15, TimeUnit.MINUTES)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.io())
+                        .subscribe { requestDifficulty() }
+
             }
         }
     }
@@ -186,8 +190,7 @@ class MainActivity : RxAppCompatActivity() {
     }
 
     private fun requestDifficulty() {
-        Observable.interval(0,15, TimeUnit.MINUTES)
-                .flatMap { httpApi.requestDifficulty(ACCESS_ID, System.currentTimeMillis().toString()) }
+        httpApi.requestDifficulty(ACCESS_ID, System.currentTimeMillis().toString())
                 .bindUntilEvent(this, ActivityEvent.DESTROY)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
